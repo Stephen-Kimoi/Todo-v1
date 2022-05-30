@@ -4,19 +4,70 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App</title>
+    <link rel="stylesheet" href="styles.css">
+    <title>Todo App</title> 
+
+    <style>
+        .hidden {
+            display: none;
+        } 
+        ul {
+            list-style: none; 
+            padding: 0; 
+            margin: 0;
+        }
+    </style>
 </head>
-<body> 
+<body>  
+    <div id="error" class="hidden">Something went wrong!</div>
     <form method="post" action="/todos/create">
         <input type="text" name="description" />
         <input type="submit" value="Create" />
     </form>
     <ul>
         {% for d in data %}
-        <li>{{ d.description }}</li>
+        <li><input class="check-completed" type="checkbox" {% if d.completed %} checkbox {% endif %}>{{ d.description }}</li>
         {% endfor %}
     </ul>
 
-    <script src="app.js"></script>
+    <script> 
+        checkboxes = document.querySelectorAll('.check-completed'); 
+        for (let i; i < checkboxes.length; i++){
+        const checkbox = checkboxes[i]; 
+        checkbox.onchange = (e) => {
+            console.log('event', e)
+        }
+        }
+
+        document.getElementById('form').onSubmit = (e) => {
+        e.preventDefault(); 
+
+        fetch('/todos/create', {
+            method: 'POST', 
+            body: json.Stringify({
+                'description': document.getElementById('description').value
+            }), 
+            header: {
+                'Content-Type': 'application/json'
+            }
+        }) 
+        .then( (response) => {
+            return response.json() 
+        }
+        )
+        .then( (responsejson) => {
+            console.log(responsejson); 
+            const liItem = document.createElement('LI'); 
+            liItem.innerHTML = responsejson['description']; 
+            document.getElementById('todos').appendChild(liItem); 
+            document.getElementById('error').className = 'hidden'; 
+        }
+        )
+        .catch( (error) => {
+            doument.getElementById('error').className = ''; 
+        })
+        }
+
+    </script>
 </body>
 </html>
