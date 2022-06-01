@@ -1,5 +1,5 @@
 checkboxes = document.querySelectorAll('.check-completed'); 
-for (let i; i < checkboxes.length; i++){
+for (let i = 0; i < checkboxes.length; i++){
    const checkbox = checkboxes[i]; 
    checkbox.onchange = (e) => {
        console.log('event', e)
